@@ -1,4 +1,4 @@
-# Kafka producer config details
+# Kafka producer
 * Producer is designed and developed in java 
 * Response of kafka push : topic, partion & offset of message in partition.
   * Producer is composite of 
@@ -8,6 +8,7 @@
                   ProducerRecord<K, M> producerRecord = new ProducerRecord(this.topicName, key, record);
                   return this.kafkaProducer.send(producerRecord, callback);
               }
+    
       ``` 
   * Producer is of three categories : 
       * Fire and forget : we dont care if the message is handle properly or not
@@ -40,3 +41,15 @@
     * linger.ms controls the amount of time to wait for additional messages before send‐ ing the current batch
   * buffer.memory :
     * sets the amount of memory the producer will use to buffer messages wait‐ ing to be sent to brokers
+* Kafka Interceptors :
+  * It intercepts the kafka record push.
+    * ProducerRecord<K, V> onSend(ProducerRecord<K, V> record) : 
+      * it is called before record is not send to kafka. O/p of this method is serialised and pushed to kafka.
+      * You can modify the input via this method
+    * void onAcknowledgement(RecordMetadata metadata, Exception exception)
+      * You can capture the o/p from kafka, cannot modify the i/p from this mothod
+  * Common use cases for producer interceptors include capturing monitoring and trac‐ ing information; enhancing the message with standard headers, especially for lineage tracking purposes; and redacting sensitive information
+  * producer interceptors can be applied without any changes to the client code
+* Kafka Quota and Throttle 
+  * https://supergloo.com/kafka-tutorials/kafka-quotas/
+  * 
