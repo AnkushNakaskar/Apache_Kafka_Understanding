@@ -1,4 +1,4 @@
-# Kafka Quotas
+# Kafka Quota
   * Consider the Kafka cluster shared for multiple tenants, 
     * this mean same broker is shared across multiple clients
     * resources shared between different clients even though topic might be different, consumer group might be different.
