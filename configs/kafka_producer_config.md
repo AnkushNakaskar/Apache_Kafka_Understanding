@@ -53,3 +53,4 @@
 * Kafka Quota and Throttle 
   * https://supergloo.com/kafka-tutorials/kafka-quotas/
   * https://cwiki.apache.org/confluence/display/kafka/kip-13+-+quotas
+  * https://kafka.apache.org/documentation/#design_quotas
