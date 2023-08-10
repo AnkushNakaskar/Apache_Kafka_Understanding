@@ -47,18 +47,21 @@
             quota.producer.default=52428800
           
           # Sets consumer quota to 50 MB
-            quota.consumer.default=52428800 ```
+            quota.consumer.default=52428800 
+          ```
       * we may need to configure different quota for different clients at run time without any restart of Kafka brokers
       * below commands can be executed from Kafka broker home directory to configure client with id "test-client" with producer quota as 10 MB and consumer quota as 20 MB 
         * ``` 
              # Adds configuration for client with id test-client
-             ./bin/kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate=10485760,consumer_byte_rate=20971520' --entity-name test-client --entity-type clients ```
+             ./bin/kafka-configs.sh  --zookeeper localhost:2181 --alter --add-config 'producer_byte_rate=10485760,consumer_byte_rate=20971520' --entity-name test-client --entity-type clients 
+          ```
         * Once updated, you can also verify your configurations using below describe command -
           * ``` 
             # Describe configurations
             ./bin/kafka-configs.sh  --zookeeper localhost:2181 --describe --entity-name test-client --entity-type clients
 
             #Output of above command will be as below
-            Configs for clients:test-client are producer_byte_rate=10485760,consumer_byte_rate=20971520 ```
+            Configs for clients:test-client are producer_byte_rate=10485760,consumer_byte_rate=20971520 
+            ```
   
     
