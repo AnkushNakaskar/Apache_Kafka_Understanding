@@ -64,13 +64,14 @@
             Configs for clients:test-client are producer_byte_rate=10485760,consumer_byte_rate=20971520 
             ```
       * You can define those limit using below type :
-        * --entity-name clientC --entity-type clients
-          * Limiting clientC (identified by client-id) to produce only <> bytes per second
-        * --entity-name user1 --entity-type users
-          * Limiting user1 (identified by authenticated principal) to produce only <> bytes
-        * ```
-           bin/kafka-configs  --bootstrap-server localhost:9092 --alter --add-config 'consumer_byte_rate=2048' --entity-type users
-            -> this define config for all users
-            -> same can be given all the client if you skip the entity-name. 
-          ```
+        * entity-type & entity-name
+          * ```--entity-name clientC --entity-type clients```
+            * Limiting clientC (identified by client-id) to produce only <> bytes per second
+          * ```--entity-name user1 --entity-type users```
+            * Limiting user1 (identified by authenticated principal) to produce only <> bytes
+          * ```
+             bin/kafka-configs  --bootstrap-server localhost:9092 --alter --add-config 'consumer_byte_rate=2048' --entity-type users
+              -> this define config for all users
+              -> same can be given all the client if you skip the entity-name. 
+            ```
     
