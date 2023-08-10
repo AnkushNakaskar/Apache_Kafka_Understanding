@@ -52,4 +52,4 @@
   * producer interceptors can be applied without any changes to the client code
 * Kafka Quota and Throttle 
   * https://supergloo.com/kafka-tutorials/kafka-quotas/
-  * 
+  * https://cwiki.apache.org/confluence/display/kafka/kip-13+-+quotas
