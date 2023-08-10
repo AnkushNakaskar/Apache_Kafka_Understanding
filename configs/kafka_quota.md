@@ -2,8 +2,8 @@
   * Consider the Kafka cluster shared for multiple tenants, 
     * this mean same broker is shared across multiple clients
     * resources shared between different clients even though topic might be different, consumer group might be different.
-  * **What is meaning of Quotas in Kafka ?**
-    * Quotas define number of resources dedicated to be used in kafka cluster.
+  * **What is meaning of Quota in Kafka ?**
+    * Quota define number of resources dedicated to be used in kafka cluster.
   * **Why we need Quota ?**
     * Preventing resource contention : one client to use too many resources might affect other client
     * Fairness: equal amount of resources, no matter how big or busy they are.
