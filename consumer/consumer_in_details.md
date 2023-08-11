@@ -1,7 +1,7 @@
 # Kafka Consumer in details 
 * **Consumer & Consumer group**
   * each consumer in the group will receive messages from a different subset of the partitions in the topic
-  * ![](diagram/consumer_architecture.png)
+  * * ![](../diagram/consumer_architecture.png)
     * As above figure depict, below points
       * There is one consumer group, which have only one consumer inside the group
       * And Topic has four partition , since there is only one consumer , that same instance is consuming messages from all the partition.
