@@ -77,7 +77,7 @@
   *  
 * **Questions :**
   * How to set the re-balance strategy for particular consumer group ?
-     *  you can get answer in this config properties : https://github.com/AnkushNakaskar/Apache_Kafka_Understanding/blob/main/consumer/consumer_config_in_details.md 
+     *  you can get answer in this config properties : link : https://github.com/AnkushNakaskar/Apache_Kafka_Understanding/blob/main/consumer/consumer_config_in_details.md 
   * How to check if group.id does not exist in kafka cluster ?
     * Can we specify any group.id in kafka consumer config ? How to avoid it ?
     * 
