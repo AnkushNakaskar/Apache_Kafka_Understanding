@@ -1,39 +1,39 @@
 # Kafka Consumer in details
 * **Consumer & Consumer group**
-    * each consumer in the group will receive messages from a different subset of the partitions in the topic
-    * * ![](../diagram/consumer_architecture.png)
-    * As above figure depict, below points
-        * There is one consumer group, which have only one consumer inside the group
-        * And Topic has four partition , since there is only one consumer , that same instance is consuming messages from all the partition.
-        * We can have at max number of consumer as number of partition. Excess consumer will not be use while reading message.
-    * We can have multiple consumer group subscribe to same topic.
-        * You can consider the consumer group as logical use case to process the message.
-        * For example : Payment event message, this can be use in two different way
-            * Payment notification to user : this is one of consumer group, subscribe to same topic
-            * Payment process via bank : this is another consumer group, subscribe to same topic
+  * each consumer in the group will receive messages from a different subset of the partitions in the topic
+  * * ![](../diagram/consumer_architecture.png)
+  * As above figure depict, below points
+    * There is one consumer group, which have only one consumer inside the group
+    * And Topic has four partition , since there is only one consumer , that same instance is consuming messages from all the partition.
+    * We can have at max number of consumer as number of partition. Excess consumer will not be use while reading message.
+  * We can have multiple consumer group subscribe to same topic.
+    * You can consider the consumer group as logical use case to process the message.
+    * For example : Payment event message, this can be use in two different way
+      * Payment notification to user : this is one of consumer group, subscribe to same topic
+      * Payment process via bank : this is another consumer group, subscribe to same topic
 * **Consumer Groups and Partition Rebalance**
-    * When we add a new consumer to the group, it starts consuming messages from partitions previously consumed by another consumer
-    * When a consumer shuts down or crashes; it leaves the group, and the partitions it used to consume will be consumed by one of the remaining consumers
-    * Reassignment of partitions to consumers also happens when the topics the consumer group is consuming are modified (e.g., if an administrator adds new partitions).
-    * **Rebalance :**
-      * Eager rebalances : all consumers stop consuming, give up their owner‐ ship of all partitions, rejoin the consumer group
-      * Cooperative rebalances : 
-        * typically involve reas‐ signing only a small subset of the partitions from one consumer to another, and allowing consumers to continue processing records from all the partitions that are not reassigned
-        * Initially, the consumer group leader informs all the consumers that they will lose ownership of a subset of their partitions, then the consumers stop consuming from these partitions and give up their ownership in them. In the second phase, the consumer group leader assigns these now orphaned partitions to their new owners
-    * **Consumer liveliness :**
-      * Consumers maintain membership in a consumer group and ownership of the parti‐ tions assigned to them by sending heartbeats to a Kafka broker designated as the group coordinator 
-      * this broker can be different for different consumer group
-      * if consumer stops sending heartbeats for long enough, its session will timeout and the group coordinator will consider it dead and trigger a rebalance
-      * the consumer will notify the group coordinator that it is leaving, and the group coordinator will trigger a rebalance immediately
+  * When we add a new consumer to the group, it starts consuming messages from partitions previously consumed by another consumer
+  * When a consumer shuts down or crashes; it leaves the group, and the partitions it used to consume will be consumed by one of the remaining consumers
+  * Reassignment of partitions to consumers also happens when the topics the consumer group is consuming are modified (e.g., if an administrator adds new partitions).
+  * **Rebalance :**
+    * Eager rebalances : all consumers stop consuming, give up their owner‐ ship of all partitions, rejoin the consumer group
+    * Cooperative rebalances :
+      * typically involve reas‐ signing only a small subset of the partitions from one consumer to another, and allowing consumers to continue processing records from all the partitions that are not reassigned
+      * Initially, the consumer group leader informs all the consumers that they will lose ownership of a subset of their partitions, then the consumers stop consuming from these partitions and give up their ownership in them. In the second phase, the consumer group leader assigns these now orphaned partitions to their new owners
+  * **Consumer liveliness :**
+    * Consumers maintain membership in a consumer group and ownership of the parti‐ tions assigned to them by sending heartbeats to a Kafka broker designated as the group coordinator
+    * this broker can be different for different consumer group
+    * if consumer stops sending heartbeats for long enough, its session will timeout and the group coordinator will consider it dead and trigger a rebalance
+    * the consumer will notify the group coordinator that it is leaving, and the group coordinator will trigger a rebalance immediately
+    * The first consumer to join the group becomes the group leader
+      *** How Does the Process of Assigning Partitions to Consumers Work?**
       * The first consumer to join the group becomes the group leader
-    *** How Does the Process of Assigning Partitions to Consumers Work?**
-        * The first consumer to join the group becomes the group leader
-        * The leader receives a list of all consumers in the group from the group coordinator
-        * group leader is responsible for assigning a subset of partitions to each consumer
-        * After deciding on the partition assignment, the consumer group leader sends the list of assignments to the group co-ordinator(broker)
-          * which sends this information to all the consumers
-        * Each consumer only sees its own assignment—the leader is the only client process that has the full list of consumers in the group and their assignments
-        * **This process repeats every time a rebalance happens.**
+      * The leader receives a list of all consumers in the group from the group coordinator
+      * group leader is responsible for assigning a subset of partitions to each consumer
+      * After deciding on the partition assignment, the consumer group leader sends the list of assignments to the group co-ordinator(broker)
+        * which sends this information to all the consumers
+      * Each consumer only sees its own assignment—the leader is the only client process that has the full list of consumers in the group and their assignments
+      * **This process repeats every time a rebalance happens.**
 * **Creating a Kafka Consumer**
   * three mandatory properties: bootstrap.servers, key.deserializer, and value.deserializer.
   * group.id : consumer group name where consumer will belong to.
@@ -49,7 +49,7 @@
       For example, to subscribe to all test topics, we can call: 
       consumer.subscribe(Pattern.compile("test.*")); 
       ```
-      
+
 * **The Poll Loop**
   * ```java
     Duration timeout = Duration.ofMillis(100); // await for poll method to respond 
@@ -74,10 +74,30 @@
             System.out.println(json.toString());
         }
     }
-  *  
+* **Commit & Offset**
+  * it allows consumers to use Kafka to track their posi‐ tion (offset) in each partition.
+  * consumers commit the last message they’ve successfully processed from a partition and implicitly assume that every message before the last was also success‐ fully processed
+  * sends a message to Kafka, which updates a ```special __consumer_offsets``` topic with the committed offset for each partition
+  * **If the committed offset is smaller than the offset of the last message the client pro‐ cessed, the messages between the last processed offset and the committed offset will be processed twice**
+    * If  committed offset is larger than the offset of the last message, all diff messages will be missed
+* **Automatic Commit** default is 5 sec
+  * when enable.auto.commit is true. last poll offset is mark as commited offset.
+    * Every poll method will mark the last poll offset as read offset if the default time is done i.e. 5 sec.
+  * If you wish to commit manually.
+    * enable flag mark to false first
+    * use method : commitSync() or commitAsync(), it will mark the offset return by poll method.
+* **Rebalance Listeners**
+  * consumer will want to do some cleanup work before exiting and also before partition rebalancing
+  * allows you to run your own code when partitions are added or removed from the consumer
+  * ```
+    public void onPartitionsAssigned(Collection<TopicPartition> partitions) // can use when new assignement is about to start
+    public void onPartitionsRevoked(Collection<TopicPartition> partitions) // can use when ownership of partion is lost
+    public void onPartitionsLost(Collection<TopicPartition> partitions)
+    ```
+
 * **Questions :**
   * How to set the re-balance strategy for particular consumer group ?
-     *  you can get answer in this config properties : link : https://github.com/AnkushNakaskar/Apache_Kafka_Understanding/blob/main/consumer/consumer_config_in_details.md 
+    *  you can get answer in this config properties : link : https://github.com/AnkushNakaskar/Apache_Kafka_Understanding/blob/main/consumer/consumer_config_in_details.md
   * How to check if group.id does not exist in kafka cluster ?
     * Can we specify any group.id in kafka consumer config ? How to avoid it ?
     * 
