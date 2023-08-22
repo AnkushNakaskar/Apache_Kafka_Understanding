@@ -94,7 +94,28 @@
     public void onPartitionsRevoked(Collection<TopicPartition> partitions) // can use when ownership of partion is lost
     public void onPartitionsLost(Collection<TopicPartition> partitions)
     ```
-
+* **Standalone Consumer: Why and How to Use a Consumer Without a Group**
+  * Sometimes you know you have a single consumer that always needs to read data from all the partitions in a topic
+  * ```
+    Duration timeout = Duration.ofMillis(100);
+    List<PartitionInfo> partitionInfos = null;
+    partitionInfos = consumer.partitionsFor("topic");
+    if (partitionInfos != null) {
+        for (PartitionInfo partition : partitionInfos)
+            partitions.add(new TopicPartition(partition.topic(),
+                partition.partition()));
+        consumer.assign(partitions);
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(timeout);
+            for (ConsumerRecord<String, String> record: records) {
+                System.out.printf("topic = %s, partition = %s, offset = %d,
+                    customer = %s, country = %s\n",
+                    record.topic(), record.partition(), record.offset(),
+                    record.key(), record.value());
+      } consumer.commitSync();
+     }
+    }
+    ```
 * **Questions :**
   * How to set the re-balance strategy for particular consumer group ?
     *  you can get answer in this config properties : link : https://github.com/AnkushNakaskar/Apache_Kafka_Understanding/blob/main/consumer/consumer_config_in_details.md
