@@ -26,3 +26,17 @@ This project guide us for apache kafka
     * occasionally refresh this information
     * **Note : if a client receives the “Not a Leader” error to one of its requests, it will refresh its metadata before trying to send the request again, since the error indicates that the client is using outdated infor‐ mation and is sending requests to the wrong broker**
 ![](diagram/kafka_client_request_flow.png)
+  * Produce Request :
+    * broker that contains the lead replica for a partition receives a produce request for this partition
+    * broker will write the new messages to local disk. On Linux, the messages are written to the filesystem cache
+    * leader observes that the follower replicas replicated the message, at which point a response is sent to the client.
+  * Fetch Request :
+    * client sends a request, asking the broker to send messages from a list of topics, partitions, and offsets
+    * Clients also specify a limit to how much data the broker can return for each partition
+      * Without this limit, brokers could send back replies large enough to cause clients to run out of memory
+    * When the leader receives the request, it first checks if the request is valid
+      * If offset is deleted or not exist, respond with error to client
+      * If valid : the broker will read messages from the partition, up to the limit set by the client in the request, and send the messages to the client
+    * clients can also define a timeout to tell the broker , If you didn’t satisfy the minimum amount of data to send within x milli‐ seconds, just send what you got.
+    * How to check if consumer only consume messages from replica's ?
+  * 
